@@ -29,6 +29,7 @@ secrecy = { version = "0.10.3", features = ["serde"] }
 serde-aux = "4.7.0"
 unicode-segmentation = "1.12.0"
 validator = "0.20.0"
+fake = "4.3.0"
 
 [dependencies.sqlx]
 version = "0.8.6"
