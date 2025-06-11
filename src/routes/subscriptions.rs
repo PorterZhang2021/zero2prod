@@ -1,9 +1,11 @@
+
 use actix_web::{HttpResponse, web};
 use chrono::Utc;
 use sqlx::PgPool;
 use unicode_segmentation::UnicodeSegmentation;
 use uuid::Uuid;
-use crate::domain::{NewSubscriber, SubscriberName};
+use crate::domain::new_subscriber::NewSubscriber;
+use crate::domain::subscriber_name::SubscriberName;
 
 #[derive(serde::Deserialize)]
 pub struct FormData {
@@ -11,7 +13,7 @@ pub struct FormData {
     email: String,
 }
 #[tracing::instrument(
-    name="Adding a new subscriber",
+    name = "Adding a new subscriber",
     skip(form, pool),
     fields(
         subscriber_email = %form.email,
@@ -19,12 +21,13 @@ pub struct FormData {
     )
 )]
 pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
-    if !is_valid_name(&form.name) {
-        return HttpResponse::BadRequest().finish();
-    }
+    let name = match SubscriberName::parse(form.0.name) {
+        Ok(name) => name,
+        Err(_) => return HttpResponse::BadRequest().finish(),
+    };
     let new_subscriber = NewSubscriber {
+        name,
         email: form.0.email,
-        name: SubscriberName::parse(form.0.name).expect("Name validation failed."),
     };
     match insert_subscriber(&pool, &new_subscriber).await {
         Ok(_) => HttpResponse::Ok().finish(),
@@ -45,7 +48,10 @@ pub fn is_valid_name(s: &str) -> bool {
     name = "Saving new subscriber details in the database",
     skip(pool, new_subscriber)
 )]
-pub async fn insert_subscriber(pool: &PgPool, new_subscriber: &NewSubscriber) -> Result<(), sqlx::Error> {
+pub async fn insert_subscriber(
+    pool: &PgPool,
+    new_subscriber: &NewSubscriber,
+) -> Result<(), sqlx::Error> {
     sqlx::query!(
         r#"
         INSERT INTO subscriptions (id, email, name, subscribed_at)
