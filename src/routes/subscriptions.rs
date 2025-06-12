@@ -4,15 +4,26 @@ use crate::domain::subscriber_name::SubscriberName;
 use actix_web::web::Form;
 use actix_web::{HttpResponse, web};
 use chrono::Utc;
+use uuid::Uuid;
 use sqlx::PgPool;
 use unicode_segmentation::UnicodeSegmentation;
-use uuid::Uuid;
 
 #[derive(serde::Deserialize)]
 pub struct FormData {
     name: String,
     email: String,
 }
+
+impl TryFrom<FormData> for NewSubscriber {
+    type Error = String;
+
+    fn try_from(form: FormData) -> Result<Self, Self::Error> {
+        let name = SubscriberName::parse(form.name)?;
+        let email = SubscriberEmail::parse(form.email)?;
+        Ok(Self { name, email })
+    }
+}
+
 #[tracing::instrument(
     name = "Adding a new subscriber",
     skip(form, pool),
@@ -22,8 +33,8 @@ pub struct FormData {
     )
 )]
 pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
-    let new_subscriber = match parse_subscriber(form) {
-        Ok(new_subscriber) => new_subscriber,
+    let new_subscriber = match form.0.try_into() {
+        Ok(form) => form,
         Err(_) => return HttpResponse::BadRequest().finish(),
     };
     match insert_subscriber(&pool, &new_subscriber).await {
@@ -73,3 +84,5 @@ pub async fn insert_subscriber(
     })?;
     Ok(())
 }
+
+
