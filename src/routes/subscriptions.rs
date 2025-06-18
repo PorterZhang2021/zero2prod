@@ -2,11 +2,11 @@ use crate::domain::new_subscriber::NewSubscriber;
 use crate::domain::subscriber_email::SubscriberEmail;
 use crate::domain::subscriber_name::SubscriberName;
 use actix_web::web::Form;
-use actix_web::{HttpResponse, web};
+use actix_web::{web, HttpResponse};
 use chrono::Utc;
-use uuid::Uuid;
 use sqlx::PgPool;
 use unicode_segmentation::UnicodeSegmentation;
+use uuid::Uuid;
 
 #[derive(serde::Deserialize)]
 pub struct FormData {
