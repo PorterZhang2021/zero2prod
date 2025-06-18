@@ -43,11 +43,6 @@ pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> Ht
     }
 }
 
-fn parse_subscriber(form: Form<FormData>) -> Result<NewSubscriber, String> {
-    let name = SubscriberName::parse(form.0.name)?;
-    let email = SubscriberEmail::parse(form.0.email)?;
-    Ok(NewSubscriber { name, email })
-}
 
 pub fn is_valid_name(s: &str) -> bool {
     let is_empty_or_whitespace = s.trim().is_empty();
