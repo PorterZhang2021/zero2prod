@@ -1,7 +1,6 @@
 use crate::domain::new_subscriber::NewSubscriber;
 use crate::domain::subscriber_email::SubscriberEmail;
 use crate::domain::subscriber_name::SubscriberName;
-use actix_web::web::Form;
 use actix_web::{web, HttpResponse};
 use chrono::Utc;
 use sqlx::PgPool;
