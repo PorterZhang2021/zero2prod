@@ -24,9 +24,14 @@ impl EmailClient {
         base_url: String,
         sender: SubscriberEmail,
         authorization_token: SecretBox<String>,
-    ) -> Self {
+    ) -> Self{
+        let http_client = Client::builder()
+            .timeout(std::time::Duration::from_secs(10))
+            .build()
+            .unwrap();
+        
         Self {
-            http_client: Client::new(),
+            http_client,
             base_url,
             sender,
             authorization: authorization_token,
