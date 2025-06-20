@@ -1,5 +1,6 @@
 use sqlx::postgres::PgPoolOptions;
 use std::net::TcpListener;
+use sqlx::__rt::timeout;
 use zero2prod::configuration::get_configuration;
 use zero2prod::email_client::EmailClient;
 use zero2prod::startup::run;
@@ -17,10 +18,12 @@ async fn main() -> std::io::Result<()> {
         .email_client
         .sender()
         .expect("Invalid sender email address.");
+    let timeout = configuration.email_client.timeout();
     let email_client = EmailClient::new(
         configuration.email_client.base_url,
         sender_email,
         configuration.email_client.authorization_token,
+        timeout
     );
 
     let address = format!(
