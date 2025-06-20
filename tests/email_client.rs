@@ -26,7 +26,7 @@ mod tests {
             base_url,
             email(),
             SecretBox::new(Faker.fake()),
-            std::time::Duration::from_secs(200),
+            std::time::Duration::from_millis(200),
         )
     }
 

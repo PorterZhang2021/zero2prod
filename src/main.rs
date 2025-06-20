@@ -1,6 +1,5 @@
 use sqlx::postgres::PgPoolOptions;
 use std::net::TcpListener;
-use sqlx::__rt::timeout;
 use zero2prod::configuration::get_configuration;
 use zero2prod::email_client::EmailClient;
 use zero2prod::startup::run;
