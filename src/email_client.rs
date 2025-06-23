@@ -1,12 +1,12 @@
 use crate::domain::subscriber_email::SubscriberEmail;
 use reqwest::Client;
-use secrecy::{ExposeSecret, SecretBox};
+use secrecy::{ExposeSecret, SecretString};
 
 pub struct EmailClient {
     http_client: Client,
     base_url: String,
     sender: SubscriberEmail,
-    authorization: SecretBox<String>,
+    authorization: SecretString,
 }
 
 #[derive(serde::Serialize)]
@@ -23,7 +23,7 @@ impl EmailClient {
     pub fn new(
         base_url: String,
         sender: SubscriberEmail,
-        authorization_token: SecretBox<String>,
+        authorization_token: SecretString,
         timeout: std::time::Duration,
     ) -> Self{
         let http_client = Client::builder()
