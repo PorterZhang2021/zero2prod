@@ -17,6 +17,7 @@ serde = { version = "1", features = ["derive"] }
 config = "0.13.4"
 uuid = { version = "1", features = ["v4"] }
 chrono = "0.4.41"
+rand = { version = "0.8", features = ["std_rng"] }
 env_logger = "0.11.8"
 log = "0.4.27"
 tracing = { version = "0.1.41", features = ["log"] }
@@ -44,6 +45,7 @@ features = [
     "chrono",
     "migrate"
 ]
+
 
 
 [dev-dependencies]
