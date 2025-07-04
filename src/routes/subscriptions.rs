@@ -13,6 +13,7 @@ use sqlx::{Error, PgPool, Postgres, Transaction};
 use std::fmt::{Debug, Formatter};
 use unicode_segmentation::UnicodeSegmentation;
 use uuid::Uuid;
+use crate::routes::error_chain_fmt;
 
 // 孤儿规则解决方案：新类型包装，然后对其进行实现
 pub struct StoreTokenError(sqlx::Error);
@@ -62,18 +63,6 @@ impl std::fmt::Debug for SubscribeError {
     }
 }
 
-fn error_chain_fmt(
-    e: &impl std::error::Error,
-    f: &mut std::fmt::Formatter<'_>,
-) -> std::fmt::Result {
-    writeln!(f, "{}\n", e)?;
-    let mut current = e.source();
-    while let Some(cause) = current {
-        writeln!(f, "Caused by:\n\t{}", cause)?;
-        current = cause.source();
-    }
-    Ok(())
-}
 
 #[derive(serde::Deserialize)]
 pub struct FormData {
